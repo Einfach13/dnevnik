@@ -1,8 +1,11 @@
 using System;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Windows;
+using System.Xml.Linq;
+using System.Collections;
 
-namespace WpfApp1_dnevnikk
+namespace WpfApp1_dnevnik
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -14,34 +17,35 @@ namespace WpfApp1_dnevnikk
             InitializeComponent();
             bd();
         }
-        public void bd() // Фуекция вывода информации из БД в приложение
+        public void bd() //Функция вывода информации из БД в приложение
         {
-            fio.Clear(); groupp.Clear(); datar.Clear();
-            id.Clear(); data.Clear(); tema.Clear(); ocenka.Clear();
-
+            fio.Clear();
+            groupp.Clear();
+            datar.Clear();
+            id.Clear();
+            data.Clear();
+            tema.Clear();
+            ocenka.Clear();
+//
             string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
-            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
-            conn.Open();// Открытие Соединения
-
-            string ssql1 = $"SELECT TOP (1000) [name],[groupp],[data] FROM [practika].[dbo].[student]"; //Зaпрос таблицы Student
-
-            SqlCommand command = new SqlCommand(ssql1, conn);// Объект вывода запросов
-            SqlDataReader reader = command.ExecuteReader(); // Выполнение запроса вывод информации
-
-            while (reader.Read()) //В цикле вывести всю информацию из таблици
+            SqlConnection conn = new SqlConnection(connectionString);
+            conn.Open();
+            string ssql1 = $"SELECT TOP (1000) [name],[groupp],[data] FROM [practika].[dbo].[student]";
+            SqlCommand command = new SqlCommand(ssql1, conn);
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
             {
-
                 fio.Text += (reader[0].ToString() + "\n");
                 groupp.Text += (reader[1].ToString() + "\n");
                 datar.Text += (reader[2].ToString() + "\n");
 
             }
-            reader.Close(); // Закрываем "чтение" первой таблицы
+            reader.Close(); // закрываем чтение таблицы student
 
-            string sql2 = $"SELECT TOP (1000) [id],[data],[zadanie],[osenka]FROM[practika].[dbo].[dnevnik]"; // Запрос таблицы Dnevnik
+            
+            string sql2 = $"SELECT TOP (1000) [id],[data],[zadanie],[osenka]FROM[practika].[dbo].[dnevnik]"; // Запрос таблицы dnevnik
             SqlCommand command2 = new SqlCommand(sql2, conn);
             SqlDataReader reader2 = command2.ExecuteReader();
-
             while (reader2.Read())
             {
                 id.Text += (reader2[0].ToString() + "\n");
@@ -49,14 +53,14 @@ namespace WpfApp1_dnevnikk
                 tema.Text += (reader2[2].ToString() + "\n");
                 ocenka.Text += (reader2[3].ToString() + "\n");
             }
-
-            reader2.Close(); // Закрываем чтение второй таблицы
+            reader2.Close(); // закрываем чтение таблицы dnevnik
         }
-        private void udf_Click(object sender, RoutedEventArgs e)
+
+        private void udf_Click1(object sender, RoutedEventArgs e)
         {
             string fio = fiou.Text;
 
-            string ssql = $"DELETE  FROM student  WHERE name = '{fio}'"; //ЗАпрос удалить поле 
+            string ssql = $"DELETE  FROM student  WHERE name = '{fio}'"; //Зfпрос удалить поле 
 
             string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
             SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
@@ -70,11 +74,12 @@ namespace WpfApp1_dnevnikk
             fiou.Clear();
         }
 
+        // удаление id
         private void udid_Click(object sender, RoutedEventArgs e)
         {
             string id2 = idu.Text;
 
-            string ssql = $"DELETE  FROM dnevnik  WHERE id = '{id2}'"; //ЗАпрос удалить поле 
+            string ssql = $"DELETE  FROM dnevnik  WHERE id = '{id2}'"; //Запрос удалить поле 
 
             string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
             SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
@@ -88,13 +93,14 @@ namespace WpfApp1_dnevnikk
             idu.Clear();
         }
 
+        // изменения таблица student
         private void dobs_Click(object sender, RoutedEventArgs e)
         {
             string fio = fiod.Text;
             string group = grouppd.Text;
             string data_roz = datard.Text;
 
-            string ssql = $"INSERT INTO student (name,groupp,data) VALUES ('{fio}', '{group}','{data_roz}')"; //ЗАпрос вставить данные в таблицу 
+            string ssql = $"INSERT INTO student (name,groupp,data) VALUES ('{fio}', '{group}','{data_roz}')"; //Запрос вставить данные в таблицу 
 
             string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
             SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
@@ -108,6 +114,7 @@ namespace WpfApp1_dnevnikk
             fiod.Clear(); grouppd.Clear(); datard.Clear();
         }
 
+        // изменения таблица dnevnik
         private void dobo_Click(object sender, RoutedEventArgs e)
         {
             int id2 = Convert.ToInt32(idd.Text);
@@ -129,6 +136,7 @@ namespace WpfApp1_dnevnikk
             idd.Clear(); datad.Clear(); temad.Clear(); ocenkad.Clear();
         }
 
+        // изменение имени
         private void sohf_Click(object sender, RoutedEventArgs e)
         {
             string fio1 = fioe.Text;
@@ -148,6 +156,7 @@ namespace WpfApp1_dnevnikk
             fioe.Clear(); fione.Clear();
         }
 
+        // изменение группы
         private void sohg_Click(object sender, RoutedEventArgs e)
         {
             string group1 = grouppeText;
@@ -167,6 +176,7 @@ namespace WpfApp1_dnevnikk
             grouppe.Clear(); grouppne.Clear();
         }
 
+        // измененение др
         private void sohdr_Click(object sender, RoutedEventArgs e)
         {
             string datar1 = datare.Text;
@@ -186,10 +196,97 @@ namespace WpfApp1_dnevnikk
             datare.Clear(); datarne.Clear();
         }
 
+        // изменение id
+        private void sohid_Click(object sender, RoutedEventArgs e)
+        {
+            string id1 = ide.Text;
+            string id2 = idne.Text;
+
+            string ssql = $"UPDATE dnevnik SET id = '{id2}' WHERE id = '{id1}'";
+
+            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
+            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
+            conn.Open();// Открытие Соединения*/
+
+            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
+
+            int number = command.ExecuteNonQuery();
+            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
+
+            ide.Clear(); idne.Clear();
+        }
+
+        // изменение даты работы
+        private void sohd_Click(object sender, RoutedEventArgs e)
+        {
+            string data1 = datae.Text;
+            string data2 = datane.Text;
+
+            string ssql = $"UPDATE dnevnik SET data = '{data2}' WHERE data = '{data1}'";
+
+            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
+            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
+            conn.Open();// Открытие Соединения*/
+
+            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
+
+            int number = command.ExecuteNonQuery();
+            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
+
+            datae.Clear(); datane.Clear();
+        }
+
+        // изменение темы
+        private void soht_Click(object sender, RoutedEventArgs e)
+        {
+            string tema1 = temae.Text;
+            string tema2 = temane.Text;
+
+            string ssql = $"UPDATE dnevnik SET zadanie = '{tema2}' WHERE zadanie = '{tema1}'";
+
+            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
+            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
+            conn.Open();// Открытие Соединения*/
+
+            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
+
+            int number = command.ExecuteNonQuery();
+            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
+
+            temae.Clear(); temane.Clear();
+        }
+
+        //изменение оценки
+        private void soho_Click(object sender, RoutedEventArgs e)
+        {
+            string ocenka1 = ocenkae.Text;
+            string ocenka2 = ocenkane.Text;
+
+            string ssql = $"UPDATE dnevnik SET ocenka = '{ocenka2}' WHERE ocenka = '{ocenka1}'";
+
+            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
+            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
+            conn.Open();// Открытие Соединения*/
+
+            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
+
+            int number = command.ExecuteNonQuery();
+            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
+
+            ocenkae.Clear(); ocenkane.Clear();
+        }
+
+
+        //обновление данных
         private void obn_Click(object sender, RoutedEventArgs e)
         {
-            fio.Clear(); groupp.Clear(); datar.Clear();
-            id.Clear(); data.Clear(); tema.Clear(); ocenka.Clear();
+            fio.Clear(); 
+            groupp.Clear(); 
+            datar.Clear();
+            id.Clear(); 
+            data.Clear(); 
+            tema.Clear(); 
+            ocenka.Clear();
 
             string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
             SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
@@ -225,82 +322,6 @@ namespace WpfApp1_dnevnikk
             reader2.Close(); // Закрываем чтение второй таблицы
         }
 
-        private void sohid_Click(object sender, RoutedEventArgs e)
-        {
-            string id1 = ide.Text;
-            string id2 = idne.Text;
-
-            string ssql = $"UPDATE dnevnik SET id = '{id2}' WHERE id = '{id1}'";
-
-            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
-            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
-            conn.Open();// Открытие Соединения*/
-
-            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
-
-            int number = command.ExecuteNonQuery();
-            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
-
-            ide.Clear(); idne.Clear();
-        }
-
-        private void sohd_Click(object sender, RoutedEventArgs e)
-        {
-            string data1 = datae.Text;
-            string data2 = datane.Text;
-
-            string ssql = $"UPDATE dnevnik SET data = '{data2}' WHERE data = '{data1}'";
-
-            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
-            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
-            conn.Open();// Открытие Соединения*/
-
-            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
-
-            int number = command.ExecuteNonQuery();
-            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
-
-            datae.Clear(); datane.Clear();
-        }
-
-        private void soht_Click(object sender, RoutedEventArgs e)
-        {
-            string tema1 = temae.Text;
-            string tema2 = temane.Text;
-
-            string ssql = $"UPDATE dnevnik SET zadanie = '{tema2}' WHERE zadanie = '{tema1}'";
-
-            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
-            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
-            conn.Open();// Открытие Соединения*/
-
-            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
-
-            int number = command.ExecuteNonQuery();
-            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
-
-            temae.Clear(); temane.Clear();
-        }
-
-        private void soho_Click(object sender, RoutedEventArgs e)
-        {
-            string ocenka1 = ocenkae.Text;
-            string ocenka2 = ocenkane.Text;
-
-            string ssql = $"UPDATE dnevnik SET ocenka = '{ocenka2}' WHERE ocenka = '{ocenka1}'";
-
-            string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=practika;Integrated Security=True";
-            SqlConnection conn = new SqlConnection(connectionString); // Подключение к БД
-            conn.Open();// Открытие Соединения*/
-
-            SqlCommand command = new SqlCommand(ssql, conn);// Объект вывода запросов
-
-            int number = command.ExecuteNonQuery();
-            MessageBox.Show("Изменения сохранены!\nОбновлено объектов: " + number);
-
-            ocenkae.Clear(); ocenkane.Clear();
-        }
-
-        
     }
+
 }
